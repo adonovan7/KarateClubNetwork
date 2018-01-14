@@ -1,0 +1,163 @@
+---
+title: "KarateNetworks"
+author: "Andie Donovan"
+date: "1/13/2018"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Zachary's Karate Class
+
+```{r}
+#install.packages('igraphdata')
+#install.packages(igraph')
+library(igraph)
+library(igraphdata)
+```
+
+## Karate Dataset Description:
+
+> Social network between members of a university karate club, led by president John A. and karate instructor Mr. Hi (pseudonyms). The edge weights are the number of common activities the club members took part of. Zachary studied conflict and fission in this network, as the karate club was split into two separate clubs, after long disputes between two factions of the club, one led by John A., the other by Mr. Hi. The ???Faction??? vertex attribute gives the faction memberships of the actors. After the split of the club, club members chose their new clubs based on their factions, except actor no. 9, who was in John A.???s faction but chose Mr. Hi???s club.
+
+## Loading Data
+
+The karate dataset and other network data is included in the igraphdata package. To load in the karate data and look at other available datasets and their short summaries, type the following:
+
+```{r}
+data(package = "igraphdata")
+data(karate)
+```
+
+Next, let's take a closer look at the data and its features:
+
+```{r}
+kar <- karate # shorting dataset name
+kar # will print network data information, including edge and vertex attributes
+head(kar) # look at matrix structure
+
+V(kar) # names or labels of the vertices/ nodes
+E(kar) # map of the connections or edges between vertices
+
+gorder(kar) # number of vertices in network
+gsize(kar) # number of edges in network
+
+vertex_attr(kar) # Faction, name, label, color
+edge_attr(kar) # weight
+```
+It looks like the data set contains 34 people (vertices/nodes) and maps 78 connections (edges) between them. There are two individuals who are names, Mr. Hi and John A, and the rest are labeled as "Actor" and then a number from 1 to 33. The listed vertex attributes are: Faction, name, label, and color. Color is the faction that the individual joined after the dichotomy while Faction is the sector that the individuals were originally a part of. Label is simply an abbreviation of the individual's name. 
+
+Furthermore, the print out of the matrix show that entries have values greater than 1. This indicates that the data is weighted, meaning that the connection between any two nodes (aka vertices) is somehow measured in terms of its strength. From the summary above, we see that the edge attribute "weight" is measured by number of common activities the karate students participate in. 
+
+We can double check that the data is weighted with the following command:
+
+```{r}
+is.weighted(kar) # TRUE
+```
+
+## Exploratory Data Analysis:
+
+Next, let's take a deeper look at some of the network data's features and statistical properties :
+
+```{r}
+x <- neighbors(kar, "Mr Hi", mode=c("all")) # Mr.Hi's 'neighbors'
+y <- neighbors(kar, "John A", mode=c("all")) # John A's 'neighbors'
+intersection(x, y) # how many neighbors do the pair have in common?
+```
+
+A vertex's "neighbors" or adjacent vertices are those that are directly connected by an edge. Neighborhoods can then be calculated by finding all of a specified vertex's immediate connections. In graph theory, these induced subgraphs are useful in calculating a network's *clustering coefficient*, or overall density. If a vertex has no neighbors, it is considered *isolated*.  
+
+From the above code, it appears that Mr.Hi and John A have 4 neighbors in common: Actors 9, 14, 20 and 32.
+
+
+## Network Interconnectivity
+
+Network interconnectivity refers to the proportion of edges to nodes as well as the *geodesic distance* between all the nodes. The geodesic distance represents the shortest possible path from one node to another and is a key indicator of how "well-connected" the network is. For example, two nodes that are immediately connected have a geodesic distance of 1, while two nodes that have a common neighbor but are not directly connected themselves have a geodesic distance of 2. If there is no existing path between two nodes, they have a geodesic distance of infinity. While geodesic distances are useful for measuring the shortest paths between nodes, its near-converse is the *diameter*, which is the longest path (or largest geodesic) between any two nodes in the network. 
+
+One useful function for finding neighbors of geodesic distance greater than one is the "ego" function. Note that the parameter "mode" is for directed networks, which have "in" and "out" arrows. The karate dataset is not directed, so we will use mode="all". *Order* is the number of steps required to get from one specified vertex to another.  
+
+```{r}
+is.directed(kar) # FALSE
+head(ego(kar, order=2, "Mr Hi", mode="all")) # finds all nodes that are within two steps of Mr. Hi. 
+```
+
+The longest path is 13 nodes long and is between Actors 16 and 17. To find this diameter of the network, type the following:
+
+```{r}
+get_diameter(kar) # returns a path with the actual diameter
+
+diameter(kar, directed=FALSE, weights= E(kar)$weights) # length of path considering weights (one of the edge attributes)
+diameter(kar, directed=FALSE, weights=NA) # length of path not considering weights
+
+farthest_vertices(kar) # alternative method of finding largest path between any two people
+```
+
+To find which node has the most connections, we want to look at the person with the highest *degree*. In this case, that person is John A., who has a degree of 34, including weights. 
+
+```{r}
+which.max(degree(kar, mode = c("all")))
+```
+
+Let's change the vertex color attribute for Mr.Hi and John A, to separate them as the faction leaders. We will make their nodes green. 
+
+```{r}
+V(kar)$color <- ifelse(
+  V(kar)$name=="John A", 3, ifelse( V(kar)$name=="Mr Hi", 3, V(kar)$color))
+```
+
+## Graphing
+
+```{r}
+set.seed(42) # we set a seed to preserve the structure of the network, which would otherwise randomly change everytime the code chunk is run. 
+
+plot.igraph(kar, vertex.label.color = "black",
+     edge.color = 'grey',
+     vertex.size=10,
+     color= c(1, 3, 2), 
+     vertex.label.cex = .6, 
+     vertex.label.degree = -pi/2,
+     layout= layout_with_lgl(kar),
+     edge.width = 0.7 * E(kar)$weight, # represent the lines between nodes as a function of the edge weight attribute. 
+     main = "Zachary's Karate Network",
+     sub = paste("Number of Vertices:", gorder(kar), "\n", "Number of Edges:", gsize(kar)))
+
+# insert a legend for colors
+legend("bottomright", 
+       legend = c("Mr.Hi's Group", "John A's group", "Faction Leaders"), 
+       col = c(rgb(0.0, 0.6, 0.8, 1.0), 
+               rgb(0.8, 0.6, 0.2, 1.0),
+               rgb(0.3, 0.7, 0.5, 1.0)), 
+       pch = c(19,19), 
+       bty = "n", 
+       text.col = "black")
+```
+
+** Note that you can also produce interactive graphs by using the same code as above, but with the tkplot() function. 
+
+For more information on the plot.igraph parameters, check out the package's [documentation](http://igraph.org/r/doc/)!
+
+
+## Other Network & Graph Theory Terms:
+
+**Assortativity** - the extent to which nodes clump together with other similar nodes and repel from non-similar nodes.
+
+** Cliques ** - complete 'neighborhoods' or subgraphs
+
+** Scale - free ** - degree distribution follows the power law
+
+**Isomorphic** - an alternative representation of a graph that preserves the adjacency matrix of the data. In other words, it is a bijection or one-to-one function of the vertices of two graphs. 
+  * Automorphisms constitute the set of all possible isomorphisms
+
+**Adhesion** - edge connectivity; how many edges neeed to be removed to eliminate contact between two nodes
+
+** Preferential Attachment ** - The theory that well-connected nodes are more likely to acquire new connections than poorly connected nodes
+
+**Centrality** - whether or not there is one or more "central" nodes around which the other nodes cluster. 
+
+** Articulation Points** - outliers or poorly connected nodes
+
+** Small World Model** - Most or all nodes are not neighbors but are still closely connected (have a small geodesic distance). Typically these follow a relatively symmetric shape
