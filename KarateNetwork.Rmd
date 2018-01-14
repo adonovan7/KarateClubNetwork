@@ -22,7 +22,7 @@ library(igraphdata)
 
 ## Karate Dataset Description:
 
-> Social network between members of a university karate club, led by president John A. and karate instructor Mr. Hi (pseudonyms). The edge weights are the number of common activities the club members took part of. Zachary studied conflict and fission in this network, as the karate club was split into two separate clubs, after long disputes between two factions of the club, one led by John A., the other by Mr. Hi. The ???Faction??? vertex attribute gives the faction memberships of the actors. After the split of the club, club members chose their new clubs based on their factions, except actor no. 9, who was in John A.???s faction but chose Mr. Hi???s club.
+> Social network between members of a university karate club, led by president John A. and karate instructor Mr. Hi (pseudonyms). The edge weights are the number of common activities the club members took part of. Zachary studied conflict and fission in this network, as the karate club was split into two separate clubs, after long disputes between two factions of the club, one led by John A., the other by Mr. Hi. The "Faction" vertex attribute gives the faction memberships of the actors. After the split of the club, club members chose their new clubs based on their factions, except actor no. 9, who was in John A.'s faction but chose Mr. Hi's club.
 
 ## Loading Data
 
@@ -145,9 +145,9 @@ For more information on the plot.igraph parameters, check out the package's [doc
 
 **Assortativity** - the extent to which nodes clump together with other similar nodes and repel from non-similar nodes.
 
-** Cliques ** - complete 'neighborhoods' or subgraphs
+**Cliques** - complete 'neighborhoods' or subgraphs
 
-** Scale - free ** - degree distribution follows the power law
+**Scale - free** - degree distribution follows the power law
 
 **Isomorphic** - an alternative representation of a graph that preserves the adjacency matrix of the data. In other words, it is a bijection or one-to-one function of the vertices of two graphs. 
   * Automorphisms constitute the set of all possible isomorphisms
@@ -158,6 +158,6 @@ For more information on the plot.igraph parameters, check out the package's [doc
 
 **Centrality** - whether or not there is one or more "central" nodes around which the other nodes cluster. 
 
-** Articulation Points** - outliers or poorly connected nodes
+**Articulation Points** - outliers or poorly connected nodes
 
-** Small World Model** - Most or all nodes are not neighbors but are still closely connected (have a small geodesic distance). Typically these follow a relatively symmetric shape
+**Small World Model** - Most or all nodes are not neighbors but are still closely connected (have a small geodesic distance). Typically these follow a relatively symmetric shape
