@@ -154,7 +154,7 @@ For more information on the plot.igraph parameters, check out the package's [doc
 
 **Adhesion** - edge connectivity; how many edges neeed to be removed to eliminate contact between two nodes
 
-** Preferential Attachment ** - The theory that well-connected nodes are more likely to acquire new connections than poorly connected nodes
+**Preferential Attachment** - The theory that well-connected nodes are more likely to acquire new connections than poorly connected nodes
 
 **Centrality** - whether or not there is one or more "central" nodes around which the other nodes cluster. 
 
