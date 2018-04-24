@@ -2,15 +2,7 @@
 title: "KarateNetworks"
 author: "Andie Donovan"
 date: "1/13/2018"
-output:
-  word_document: default
-  html_document: default
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # Zachary's Karate Class
 
 ```{r}
